@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "24473520040",
+    "firebase_url": "https://obd2-bef56-default-rtdb.firebaseio.com",
+    "project_id": "obd2-bef56",
+    "storage_bucket": "obd2-bef56.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:24473520040:android:17b1419571266c071d7f9d",
+        "android_client_info": {
+          "package_name": "com.example.obd2_demo_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDflQGZpAmjBo5lCl831jh8uh_ePG0a9QY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
