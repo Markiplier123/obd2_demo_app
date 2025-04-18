@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -26,7 +28,7 @@ class _SignUpPageState extends State<SignUpPage> {
     return Scaffold(
       body: Stack(
         children: [
-          Container(
+          const SizedBox(
             width: double.infinity,
             height: double.infinity,
           ),
@@ -43,7 +45,8 @@ class _SignUpPageState extends State<SignUpPage> {
                       onPressed: () {
                         Navigator.pushReplacement(
                           context,
-                          MaterialPageRoute(builder: (context) => LoginPage()),
+                          MaterialPageRoute(
+                              builder: (context) => const LoginPage()),
                         );
                       },
                     ),
@@ -154,8 +157,7 @@ class _SignUpPageState extends State<SignUpPage> {
                           ElevatedButton(
                             onPressed: _isRegistering ? null : _register,
                             style: ElevatedButton.styleFrom(
-                              minimumSize: const Size(double.infinity,
-                                  50),
+                              minimumSize: const Size(double.infinity, 50),
                             ),
                             child: _isRegistering
                                 ? const CircularProgressIndicator(
@@ -219,9 +221,7 @@ class _SignUpPageState extends State<SignUpPage> {
           );
           Navigator.pushReplacement(
             context,
-            MaterialPageRoute(
-                builder: (context) =>
-                    LoginPage()),
+            MaterialPageRoute(builder: (context) => const LoginPage()),
           );
         }
       } catch (e) {

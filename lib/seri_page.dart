@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:app_chan_doan/connection_manage.dart';
 import 'package:app_chan_doan/menu_page.dart';
 import 'package:app_chan_doan/mqtt.dart';
@@ -30,9 +32,7 @@ class _SeriPageState extends State<SeriPage> {
         .listen((event) {
       var status = event.snapshot.value.toString();
       setState(() {
-        if (initialStatus == null) {
-          initialStatus = status;
-        }
+        initialStatus ??= status;
       });
       _handleFirebaseStatus(status);
     });
@@ -54,7 +54,7 @@ class _SeriPageState extends State<SeriPage> {
           );
         },
       );
-      await Future.delayed(Duration(seconds: 3));
+      await Future.delayed(const Duration(seconds: 3));
       _goBackToButtonScreen();
     } else if (status == 'disconnect') {
       showDialog(
@@ -69,7 +69,7 @@ class _SeriPageState extends State<SeriPage> {
           );
         },
       );
-      await Future.delayed(Duration(seconds: 3));
+      await Future.delayed(const Duration(seconds: 3));
       _goBackToButtonScreen();
     } else if (status == 'free') {
       initialStatus = 'free';
@@ -84,7 +84,7 @@ class _SeriPageState extends State<SeriPage> {
           );
         },
       );
-      await Future.delayed(Duration(seconds: 10));
+      await Future.delayed(const Duration(seconds: 10));
       if (Navigator.canPop(context)) {
         Navigator.pop(context);
       }
@@ -104,6 +104,7 @@ class _SeriPageState extends State<SeriPage> {
     } else if (status != 'connected') {
       showDialog(
         context: context,
+        barrierDismissible: false,
         builder: (BuildContext context) {
           return const Dialog(
             insetPadding: EdgeInsets.fromLTRB(50, 250, 50, 300),
@@ -113,7 +114,7 @@ class _SeriPageState extends State<SeriPage> {
           );
         },
       );
-      await Future.delayed(Duration(seconds: 3));
+      await Future.delayed(const Duration(seconds: 2));
       _goBackToButtonScreen();
     }
   }
@@ -132,7 +133,7 @@ class _SeriPageState extends State<SeriPage> {
     }
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => MenuPage()),
+      MaterialPageRoute(builder: (context) => const MenuPage()),
     );
   }
 
@@ -145,7 +146,7 @@ class _SeriPageState extends State<SeriPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color.fromARGB(255, 190, 235, 255),
+      backgroundColor: const Color.fromARGB(255, 190, 235, 255),
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(20),
@@ -170,10 +171,11 @@ class _SeriPageState extends State<SeriPage> {
                     backgroundColor: const Color.fromARGB(255, 9, 9, 9),
                     minimumSize: const Size(double.infinity, 50),
                   ),
-                  child: Text('OK', style: TextStyle(color: Colors.white)),
+                  child:
+                      const Text('OK', style: TextStyle(color: Colors.white)),
                   onPressed: () {
                     _startListening();
-                    mqtt.publish('{"connect":${id}}');
+                    mqtt.publish('{"connect":$id}');
                   },
                 ),
                 Center(

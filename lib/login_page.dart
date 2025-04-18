@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:app_chan_doan/seri_page.dart';
 import 'package:app_chan_doan/sigup_page.dart';
 import 'package:flutter/material.dart';
@@ -45,7 +47,8 @@ class _LoginPageState extends State<LoginPage> {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
-                      SizedBox(height: MediaQuery.of(context).size.height * 0.1),
+                      SizedBox(
+                          height: MediaQuery.of(context).size.height * 0.1),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
@@ -83,7 +86,8 @@ class _LoginPageState extends State<LoginPage> {
                         controller: _passwordController,
                         obscureText: true,
                         decoration: const InputDecoration(
-                            labelText: 'Mật khẩu', prefixIcon: Icon(Icons.lock)),
+                            labelText: 'Mật khẩu',
+                            prefixIcon: Icon(Icons.lock)),
                       ),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.end,
@@ -117,7 +121,7 @@ class _LoginPageState extends State<LoginPage> {
                         onPressed: () => Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => SignUpPage())),
+                                builder: (context) => const SignUpPage())),
                         child: const Text('Tạo tài khoản mới',
                             style: TextStyle(fontWeight: FontWeight.bold)),
                       ),
@@ -129,7 +133,8 @@ class _LoginPageState extends State<LoginPage> {
                           height: 150,
                         ),
                       ),
-                      SizedBox(height: MediaQuery.of(context).size.height * 0.1),
+                      SizedBox(
+                          height: MediaQuery.of(context).size.height * 0.1),
                     ],
                   ),
                 ),
@@ -165,8 +170,8 @@ class _LoginPageState extends State<LoginPage> {
       User? user = userCredential.user;
       if (user != null) {
         if (user.emailVerified) {
-          Navigator.pushReplacement(
-              context, MaterialPageRoute(builder: (context) => SeriPage()));
+          Navigator.pushReplacement(context,
+              MaterialPageRoute(builder: (context) => const SeriPage()));
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(

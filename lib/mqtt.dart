@@ -26,7 +26,6 @@ class MQTTManager {
   }
 
   void connect() async {
-    assert(client != null);
     try {
       print('client connecting....');
       await client.connect();
@@ -68,7 +67,7 @@ class MQTTManager {
 
       // final MqttPublishMessage recMess = c![0].payload;
       final String pt =
-          MqttPublishPayload.bytesToStringAsString(recMess.payload.message!);
+          MqttPublishPayload.bytesToStringAsString(recMess.payload.message);
       print(
           'Change notification:: topic is <${c[0].topic}>, payload is <-- $pt -->');
       print('');

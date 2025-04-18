@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:math' as math;
-import 'package:app_chan_doan/mode_1/mode_1_second_page.dart';
 import 'package:app_chan_doan/mode_obj_info.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
@@ -14,7 +13,7 @@ class AppColors {
 class ChartWidget extends StatefulWidget {
   const ChartWidget({super.key, required this.chartValue});
 
-  final mode_obj_info chartValue;
+  final ModeObjInfo chartValue;
 
   @override
   State<ChartWidget> createState() {
@@ -28,7 +27,7 @@ class _ChartWidgetState extends State<ChartWidget> {
     AppColors.contentColorBlue,
   ];
 
-  List<FlSpot> Points = [];
+  List<FlSpot> points = [];
   Timer? timer;
   int xValue = 0;
   dynamic currentValue = 0;
@@ -36,12 +35,12 @@ class _ChartWidgetState extends State<ChartWidget> {
   @override
   void initState() {
     super.initState();
-    timer = Timer.periodic(Duration(milliseconds: 100), (timer) {
+    timer = Timer.periodic(const Duration(milliseconds: 100), (timer) {
       setState(() {
         currentValue = widget.chartValue.value;
-        Points.add(FlSpot(xValue.toDouble(), currentValue.toDouble()));
+        points.add(FlSpot(xValue.toDouble(), currentValue.toDouble()));
         xValue++;
-        Points.removeWhere((point) => point.x < xValue - 100);
+        points.removeWhere((point) => point.x < xValue - 100);
       });
     });
 
@@ -71,13 +70,13 @@ class _ChartWidgetState extends State<ChartWidget> {
       body: Stack(
         children: [
           Center(
-            child: Points.isNotEmpty
+            child: points.isNotEmpty
                 ? Container(
                     padding: const EdgeInsets.only(
                         top: 40, bottom: 20, left: 20, right: 20),
                     height: screenHeight * 0.9,
                     child: LineChart(mainChartData()))
-                : CircularProgressIndicator(),
+                : const CircularProgressIndicator(),
           ),
           Positioned(
             top: screenHeight * 0.45,
@@ -136,16 +135,14 @@ class _ChartWidgetState extends State<ChartWidget> {
         drawVerticalLine: true,
         getDrawingHorizontalLine: (value) {
           return const FlLine(
-            color: Color.fromARGB(
-                255, 150, 150, 150),
+            color: Color.fromARGB(255, 150, 150, 150),
             strokeWidth: 1.0,
             dashArray: [5, 3],
           );
         },
         getDrawingVerticalLine: (value) {
           return const FlLine(
-            color: Color.fromARGB(
-                255, 150, 150, 150),
+            color: Color.fromARGB(255, 150, 150, 150),
             strokeWidth: 1.0,
             dashArray: [5, 3],
           );
@@ -190,9 +187,9 @@ class _ChartWidgetState extends State<ChartWidget> {
       ),
       lineBarsData: [
         LineChartBarData(
-            spots: Points,
+            spots: points,
             isCurved: true,
-            dotData: FlDotData(show: false),
+            dotData: const FlDotData(show: false),
             belowBarData: BarAreaData(
               show: false,
             ),

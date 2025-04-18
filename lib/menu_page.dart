@@ -39,28 +39,28 @@ class MenuPage extends StatelessWidget {
                 context,
                 "Đọc số VIN",
                 'assets/images/Module_Information.png',
-                ModuleInformationPage()),
-            _buildButton(
-                context, "OBD Test", 'assets/images/OBD_Test.png', Mode6Page()),
+                const ModuleInformationPage()),
+            _buildButton(context, "OBD Test", 'assets/images/OBD_Test.png',
+                const Mode6Page()),
             _buildButton(context, "Đọc dữ liệu của xe",
-                'assets/images/Read_Stream_Data.png', Mode1FirstPage()),
+                'assets/images/Read_Stream_Data.png', const Mode1FirstPage()),
             _buildButton(context, "Đồ thị radar",
-                'assets/images/Radar_Chart.png', RadarChartPage()),
+                'assets/images/Radar_Chart.png', const RadarChartPage()),
             _buildButton(context, "Kiểm tra cơ cấu chấp hành",
-                'assets/images/Actuators_Test.png', Mode4FirstPage()),
+                'assets/images/Actuators_Test.png', const Mode4FirstPage()),
             _buildButton(context, "Đọc lỗi DTC", 'assets/images/Diagnostic.png',
-                DiagnosticPage()),
+                const DiagnosticPage()),
             _buildButton(context, "Tìm kiếm thông tin DTC",
-                'assets/images/Search_DTC.png', SearchDTCPage()),
+                'assets/images/Search_DTC.png', const SearchDTCPage()),
             _buildButton(context, "Góc quay vô lăng",
-                'assets/images/logoGT.png', SteeringWheel()),
+                'assets/images/logoGT.png', const SteeringWheel()),
             _buildButton(context, "Theo dõi GPS",
-                'assets/images/GPS_Tracker.png', GPSPage()),
+                'assets/images/GPS_Tracker.png', const GPSPage()),
             ElevatedButton(
               onPressed: () {
                 Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => LoginPage()));
-                mqtt.publish('{"disconnect":${id}}');
+                    MaterialPageRoute(builder: (context) => const LoginPage()));
+                mqtt.publish('{"disconnect":$id}');
               },
               style: ElevatedButton.styleFrom(
                 shape: RoundedRectangleBorder(
@@ -68,11 +68,12 @@ class MenuPage extends StatelessWidget {
                   side: const BorderSide(
                       color: Color.fromARGB(255, 0, 0, 0), width: 3),
                 ),
-                padding: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+                padding:
+                    const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
                 backgroundColor: Colors.white,
                 foregroundColor: Colors.black,
                 elevation: 0,
-                shadowColor: Colors.black.withOpacity(1),
+                shadowColor: Colors.black.withValues(alpha: 1),
               ),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
@@ -83,21 +84,21 @@ class MenuPage extends StatelessWidget {
                       boxShadow: [
                         BoxShadow(
                           color: const Color.fromARGB(255, 183, 183, 183)
-                              .withOpacity(0),
+                              .withValues(alpha: 0),
                           spreadRadius: 1,
                           blurRadius: 4,
-                          offset: Offset(0, 0),
+                          offset: const Offset(0, 0),
                         ),
                       ],
                     ),
                     child: Image.asset('assets/images/logout.png',
                         width: 80, height: 80),
                   ),
-                  SizedBox(height: 10),
+                  const SizedBox(height: 10),
                   const Text(
                     "Đăng xuất",
                     textAlign: TextAlign.center,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
                       color: Colors.black,
@@ -123,11 +124,11 @@ class MenuPage extends StatelessWidget {
           borderRadius: BorderRadius.circular(15),
           side: const BorderSide(color: Color.fromARGB(255, 0, 0, 0), width: 3),
         ),
-        padding: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
         backgroundColor: Colors.white,
         foregroundColor: Colors.black,
         elevation: 0,
-        shadowColor: Colors.black.withOpacity(1),
+        shadowColor: Colors.black.withValues(alpha: 1),
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -137,17 +138,17 @@ class MenuPage extends StatelessWidget {
             decoration: BoxDecoration(
               boxShadow: [
                 BoxShadow(
-                  color:
-                      const Color.fromARGB(255, 183, 183, 183).withOpacity(0),
+                  color: const Color.fromARGB(255, 183, 183, 183)
+                      .withValues(alpha: 0),
                   spreadRadius: 1,
                   blurRadius: 4,
-                  offset: Offset(0, 0),
+                  offset: const Offset(0, 0),
                 ),
               ],
             ),
             child: Image.asset(iconPath, width: 80, height: 80),
           ),
-          SizedBox(height: 10),
+          const SizedBox(height: 10),
           Text(
             text,
             textAlign: TextAlign.center,
