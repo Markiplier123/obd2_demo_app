@@ -6,8 +6,10 @@ import 'package:app_chan_doan/mqtt.dart';
 import 'package:app_chan_doan/mode_obj_info.dart';
 
 class RadarChartPage extends StatefulWidget {
-  const RadarChartPage({super.key,});
- 
+  const RadarChartPage({
+    super.key,
+  });
+
   @override
   State<RadarChartPage> createState() {
     return _RadarChartPageState();
@@ -15,7 +17,7 @@ class RadarChartPage extends StatefulWidget {
 }
 
 class _RadarChartPageState extends State<RadarChartPage> {
-  final databaseRef = FirebaseDatabase.instance.ref().child('${verifyId}/41');
+  final databaseRef = FirebaseDatabase.instance.ref().child('$verifyId/41');
 
   List<String> selectedKeys = [
     "CEL",
@@ -68,7 +70,8 @@ class _RadarChartPageState extends State<RadarChartPage> {
 
         setState(() {
           originalData = Map.fromEntries(
-            filteredData.map((entry) => MapEntry(entry.key, entry.value.toDouble())),
+            filteredData
+                .map((entry) => MapEntry(entry.key, entry.value.toDouble())),
           );
 
           radarData = Map.fromEntries(
@@ -92,15 +95,15 @@ class _RadarChartPageState extends State<RadarChartPage> {
 
   @override
   Widget build(BuildContext context) {
-    int trans_data = 0;
-    listRadarinfo.forEach((index){
-      trans_data |= (1 << index.pri_stat_1);
-    });
-    mqtt.publish('{"mode":1,"value":${trans_data}}');
-    
+    int transData = 0;
+    for (var index in listRadarinfo) {
+      transData |= (1 << index.priStat1);
+    }
+    mqtt.publish('{"mode":1,"value":$transData}');
+
     return Scaffold(
       appBar: AppBar(
-        title: Text('Đồ thị radar'),
+        title: const Text('Đồ thị radar'),
         titleTextStyle: const TextStyle(
             color: Colors.black, fontSize: 20, fontWeight: FontWeight.bold),
         backgroundColor: const Color.fromARGB(255, 145, 220, 255),
@@ -112,7 +115,7 @@ class _RadarChartPageState extends State<RadarChartPage> {
           },
         ),
         bottom: PreferredSize(
-          preferredSize: Size.fromHeight(1.0),
+          preferredSize: const Size.fromHeight(1.0),
           child: Container(
             color: Colors.grey,
             height: 2.0,
@@ -120,11 +123,11 @@ class _RadarChartPageState extends State<RadarChartPage> {
         ),
       ),
       body: radarData.isEmpty
-          ? Center(child: CircularProgressIndicator())
+          ? const Center(child: CircularProgressIndicator())
           : Column(
               children: [
                 Padding(
-                  padding: EdgeInsets.only(top: kToolbarHeight),
+                  padding: const EdgeInsets.only(top: kToolbarHeight),
                   child: Center(
                     child: SizedBox(
                       width: MediaQuery.of(context).size.width * 0.8,
@@ -137,37 +140,44 @@ class _RadarChartPageState extends State<RadarChartPage> {
                                   .map((value) => RadarEntry(value: value))
                                   .toList(),
                               borderColor: Colors.blue,
-                              fillColor: Colors.blue.withOpacity(0.3),
+                              fillColor: Colors.blue.withValues(alpha: 0.3),
                               borderWidth: 2,
                               entryRadius: 4,
                             ),
                           ],
                           radarShape: RadarShape.polygon,
-                          titleTextStyle: TextStyle(fontSize: 12),
+                          titleTextStyle: const TextStyle(fontSize: 12),
                           getTitle: (index, angle) {
                             String key = radarData.keys.toList()[index];
                             double originalValue = originalData[key] ?? 0;
                             return RadarChartTitle(
-                              text: '$key\n(${originalValue.toStringAsFixed(1)})',
+                              text:
+                                  '$key\n(${originalValue.toStringAsFixed(1)})',
                             );
                           },
-                          radarBorderData: BorderSide(color: Colors.white),
-                          gridBorderData:
-                              BorderSide(color: Colors.grey.withOpacity(0.7)),
-                          tickBorderData: BorderSide(color: Colors.grey.withOpacity(0.3)),
-                          ticksTextStyle: TextStyle(color: Colors.grey.withOpacity(0.5)),
+                          radarBorderData:
+                              const BorderSide(color: Colors.white),
+                          gridBorderData: BorderSide(
+                              color: Colors.grey.withValues(alpha: 0.7)),
+                          tickBorderData: BorderSide(
+                              color: Colors.grey.withValues(alpha: 0.3)),
+                          ticksTextStyle: TextStyle(
+                              color: Colors.grey.withValues(alpha: 0.5)),
                           tickCount: 2,
                         ),
                       ),
                     ),
                   ),
                 ),
-                SizedBox(height: 50),
+                const SizedBox(height: 50),
                 Container(
-                  margin: EdgeInsets.all(10),
+                  margin: const EdgeInsets.all(10),
                   child: const Column(
                     children: [
-                      Text('Chú thích:', style: TextStyle(fontWeight: FontWeight.bold),),
+                      Text(
+                        'Chú thích:',
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
                       Text('CEL: Tải trọng của động cơ (%)'),
                       Text('CMV: Điện áp mô đun điều khiển (V)'),
                       Text('ES: Tốc độ của động cơ (rpm)'),
@@ -179,7 +189,7 @@ class _RadarChartPageState extends State<RadarChartPage> {
                     ],
                   ),
                 ),
-                Spacer(),
+                const Spacer(),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -189,23 +199,22 @@ class _RadarChartPageState extends State<RadarChartPage> {
                           isPaused = true;
                         });
                       },
-                      child: Text("Tạm dừng"),
+                      child: const Text("Tạm dừng"),
                     ),
-                    SizedBox(width: 20),
+                    const SizedBox(width: 20),
                     ElevatedButton(
                       onPressed: () {
                         setState(() {
                           isPaused = false;
                         });
                       },
-                      child: Text("Tiếp tục"),
+                      child: const Text("Tiếp tục"),
                     ),
                   ],
                 ),
-                SizedBox(height: 20),
+                const SizedBox(height: 20),
               ],
             ),
     );
   }
 }
-

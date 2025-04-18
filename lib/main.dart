@@ -1,6 +1,6 @@
 import 'package:app_chan_doan/connection_manage.dart';
-import 'package:app_chan_doan/login_page.dart';
 import 'package:app_chan_doan/mqtt.dart';
+import 'package:app_chan_doan/seri_page.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
@@ -14,10 +14,12 @@ void main() async {
   mqtt.initializeMQTTClient();
   mqtt.connect();
 
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatefulWidget {
+  const MyApp({super.key});
+
   @override
   State<MyApp> createState() {
     return _MyAppState();
@@ -40,14 +42,14 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.detached) {
-      mqtt.publish('{"disconnect":${id}}');
+      mqtt.publish('{"disconnect":$id}');
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      home: LoginPage(),
+    return const MaterialApp(
+      home: SeriPage(),
       debugShowCheckedModeBanner: false,
     );
   }

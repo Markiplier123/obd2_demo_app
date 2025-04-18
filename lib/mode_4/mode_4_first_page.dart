@@ -11,29 +11,31 @@ class Mode4FirstPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Kiểm tra cơ cấu chấp hành'),
+        title: const Text('Kiểm tra cơ cấu chấp hành'),
         titleTextStyle: const TextStyle(
             color: Colors.black, fontSize: 20, fontWeight: FontWeight.bold),
         backgroundColor: const Color.fromARGB(255, 145, 220, 255),
         leading: PopScope(
           canPop: false,
-          onPopInvoked: (bool didPop) {
+          onPopInvokedWithResult: (bool didPop, result) {
             if (didPop) {
               return;
             }
             mqtt.publish('{"mode":0}');
-            Navigator.push(context, MaterialPageRoute(builder: (context) => MenuPage()));
+            Navigator.push(context,
+                MaterialPageRoute(builder: (context) => const MenuPage()));
           },
           child: BackButton(
             color: Colors.black,
             onPressed: () {
               mqtt.publish('{"mode":0}');
-              Navigator.push(context, MaterialPageRoute(builder: (context) => MenuPage()));
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => const MenuPage()));
             },
           ),
         ),
         bottom: PreferredSize(
-          preferredSize: Size.fromHeight(1.0),
+          preferredSize: const Size.fromHeight(1.0),
           child: Container(
             color: Colors.grey,
             height: 2.0,
@@ -49,7 +51,7 @@ class Mode4FirstPage extends StatelessWidget {
               alignment: Alignment.centerLeft,
             ),
             child: Text(
-              '${listMode4info[index].name}',
+              listMode4info[index].name,
               style: const TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.normal,
@@ -59,8 +61,10 @@ class Mode4FirstPage extends StatelessWidget {
               Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) =>
-                          Mode4SecondPage(Mode4ActInfo: listMode4info[index], streamDataMonitor: listMode1info,)));
+                      builder: (context) => Mode4SecondPage(
+                            mode4ActInfo: listMode4info[index],
+                            streamDataMonitor: listMode1info,
+                          )));
             },
           );
         },

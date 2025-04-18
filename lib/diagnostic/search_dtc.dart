@@ -1,7 +1,11 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class SearchDTCPage extends StatefulWidget {
+  const SearchDTCPage({super.key});
+
   @override
   State<SearchDTCPage> createState() {
     return _SearchDTCPageState();
@@ -25,8 +29,8 @@ class _SearchDTCPageState extends State<SearchDTCPage> {
         setState(() {
           _currentDocument = null;
         });
-        ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Không tìm thấy dữ liệu cho mã DTC này')));
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+            content: Text('Không tìm thấy dữ liệu cho mã DTC này')));
       }
     }).catchError((e) {
       print('Lỗi tải tài liệu: $e');
@@ -40,7 +44,7 @@ class _SearchDTCPageState extends State<SearchDTCPage> {
       QuerySnapshot snapshot = await firestore
           .collection('dtc_codes')
           .where(FieldPath.documentId, isGreaterThanOrEqualTo: query)
-          .where(FieldPath.documentId, isLessThan: query + 'z')
+          .where(FieldPath.documentId, isLessThan: '${query}z')
           .get();
 
       return snapshot.docs.map((doc) => doc.id).toList();
@@ -65,7 +69,7 @@ class _SearchDTCPageState extends State<SearchDTCPage> {
         backgroundColor: const Color.fromARGB(255, 145, 220, 255),
         leading: PopScope(
           canPop: false,
-          onPopInvoked: (bool didPop) {
+          onPopInvokedWithResult: (bool didPop, result) {
             if (didPop) {
               return;
             }
@@ -79,7 +83,7 @@ class _SearchDTCPageState extends State<SearchDTCPage> {
           ),
         ),
         bottom: PreferredSize(
-          preferredSize: Size.fromHeight(1.0),
+          preferredSize: const Size.fromHeight(1.0),
           child: Container(
             color: Colors.grey,
             height: 2.0,
@@ -87,7 +91,7 @@ class _SearchDTCPageState extends State<SearchDTCPage> {
         ),
       ),
       body: Container(
-        padding: EdgeInsets.all(16),
+        padding: const EdgeInsets.all(16),
         child: Column(
           children: <Widget>[
             Autocomplete<String>(
@@ -106,12 +110,11 @@ class _SearchDTCPageState extends State<SearchDTCPage> {
                 return TextField(
                   controller: textEditingController,
                   focusNode: focusNode,
-                  style: TextStyle(color: Colors.black, fontSize: 16),
+                  style: const TextStyle(color: Colors.black, fontSize: 16),
                   decoration: InputDecoration(
                     labelText: 'Hãy nhập mã lỗi',
-                    labelStyle: const TextStyle(
-                        color: Colors.black,
-                        fontSize: 20),
+                    labelStyle:
+                        const TextStyle(color: Colors.black, fontSize: 20),
                     suffixIcon: const Icon(
                       Icons.search,
                       color: Colors.black,
@@ -143,11 +146,11 @@ class _SearchDTCPageState extends State<SearchDTCPage> {
                         borderRadius: BorderRadius.circular(10),
                         boxShadow: [
                           BoxShadow(
-                            color: Color.fromARGB(255, 177, 172, 172)
-                                .withOpacity(0.7),
+                            color: const Color.fromARGB(255, 177, 172, 172)
+                                .withValues(alpha: 0.7),
                             spreadRadius: 5,
                             blurRadius: 7,
-                            offset: Offset(0, 3),
+                            offset: const Offset(0, 3),
                           ),
                         ],
                       ),
@@ -194,9 +197,10 @@ class _SearchDTCPageState extends State<SearchDTCPage> {
 
   List<Widget> _buildDocumentView() {
     List<Widget> list = [
-      SizedBox(height: 20),
+      const SizedBox(height: 20),
     ];
-    list.add(_buildSectionContainer("Tên", _getDataField('name', 'Không có dữ liệu')));
+    list.add(_buildSectionContainer(
+        "Tên", _getDataField('name', 'Không có dữ liệu')));
     list.add(_buildSectionContainer(
         "Mô tả", _getDataField('description', 'Không có dữ liệu')));
     list.add(_buildSectionContainer(
@@ -211,7 +215,7 @@ class _SearchDTCPageState extends State<SearchDTCPage> {
       margin: const EdgeInsets.only(bottom: 10),
       padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
-          color: Color.fromARGB(255, 200, 200, 200),
+          color: const Color.fromARGB(255, 200, 200, 200),
           borderRadius: BorderRadius.circular(10),
           border: Border.all(color: Colors.black)),
       child: Column(

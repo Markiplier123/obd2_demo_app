@@ -15,13 +15,13 @@ class ModuleInformationPage extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Đọc số VIN'),
+        title: const Text('Đọc số VIN'),
         titleTextStyle: const TextStyle(
             color: Colors.black, fontSize: 20, fontWeight: FontWeight.bold),
         backgroundColor: const Color.fromARGB(255, 145, 220, 255),
         leading: PopScope(
           canPop: false,
-          onPopInvoked: (bool didPop) {
+          onPopInvokedWithResult: (bool didPop, result) {
             if (didPop) {
               return;
             }
@@ -35,7 +35,7 @@ class ModuleInformationPage extends StatelessWidget {
           ),
         ),
         bottom: PreferredSize(
-          preferredSize: Size.fromHeight(1.0),
+          preferredSize: const Size.fromHeight(1.0),
           child: Container(
             color: Colors.grey,
             height: 2.0,
@@ -48,18 +48,17 @@ class ModuleInformationPage extends StatelessWidget {
         itemBuilder: (context, index) {
           return Column(
             children: [
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
                     '${listMode9info[index].name}: ',
-                    style: TextStyle(fontSize: 18),
+                    style: const TextStyle(fontSize: 18),
                   ),
                   StreamBuilder(
                     stream: databaseRef
-                        .child(
-                            '${verifyId}${listMode9info[index].firebase_name}')
+                        .child('$verifyId${listMode9info[index].firebaseName}')
                         .onValue,
                     builder: (context, snapshot) {
                       if (snapshot.hasData &&
@@ -69,18 +68,18 @@ class ModuleInformationPage extends StatelessWidget {
                             snapshot.data!.snapshot.value;
                         return Text(
                           '${listMode9info[index].value}',
-                          style: TextStyle(fontSize: 18),
+                          style: const TextStyle(fontSize: 18),
                         );
                       } else {
-                        return Center(child: CircularProgressIndicator());
+                        return const Center(child: CircularProgressIndicator());
                       }
                     },
                   ),
                 ],
               ),
-              SizedBox(height: 50),
+              const SizedBox(height: 50),
               ElevatedButton(
-                child: Text('Giải mã số VIN'),
+                child: const Text('Giải mã số VIN'),
                 onPressed: () {
                   showDialog(
                     context: context,
@@ -94,23 +93,25 @@ class ModuleInformationPage extends StatelessWidget {
                           children: [
                             Row(
                               children: [
-                                SizedBox(width: 10),
+                                const SizedBox(width: 10),
                                 Column(
                                   mainAxisSize: MainAxisSize.min,
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    SizedBox(height: 20),
+                                    const SizedBox(height: 20),
                                     Text('WMI: ${vin.wmi}'),
                                     Text('VDS: ${vin.vds}'),
                                     Text('VIS: ${vin.vis}'),
-                                    Text("Mẫu: " + vin.modelYear()),
-                                    Text("Số se-ri: " + vin.serialNumber()),
-                                    Text("Nhà máy lắp ráp: " + vin.assemblyPlant()),
-                                    Text("Nhà sản xuất: " + vin.getManufacturer().toString()),
-                                    Text("Năm sản xuất: " + vin.getYear().toString()),
-                                    Text("Khu vực: " + vin.getRegion()),
-                                    Text("Chuỗi số VIN: " + vin.toString()),
-                                    SizedBox(height: 10),
+                                    Text("Mẫu: ${vin.modelYear()}"),
+                                    Text("Số se-ri: ${vin.serialNumber()}"),
+                                    Text(
+                                        "Nhà máy lắp ráp: ${vin.assemblyPlant()}"),
+                                    Text(
+                                        "Nhà sản xuất: ${vin.getManufacturer()}"),
+                                    Text("Năm sản xuất: ${vin.getYear()}"),
+                                    Text("Khu vực: ${vin.getRegion()}"),
+                                    Text("Chuỗi số VIN: $vin"),
+                                    const SizedBox(height: 10),
                                   ],
                                 ),
                               ],
@@ -120,7 +121,7 @@ class ModuleInformationPage extends StatelessWidget {
                                 onPressed: () {
                                   Navigator.of(context).pop();
                                 },
-                                child: Text('Đóng'),
+                                child: const Text('Đóng'),
                               ),
                             ),
                           ],

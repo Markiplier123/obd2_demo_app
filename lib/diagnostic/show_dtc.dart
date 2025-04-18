@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:app_chan_doan/connection_manage.dart';
 import 'package:app_chan_doan/mqtt.dart';
 import 'package:flutter/material.dart';
@@ -8,7 +10,7 @@ import 'package:app_chan_doan/mode_obj_info.dart';
 class ShowDTC extends StatefulWidget {
   const ShowDTC({super.key, required this.modeInfoDTC});
 
-  final List<mode_obj_info> modeInfoDTC;
+  final List<ModeObjInfo> modeInfoDTC;
 
   @override
   State<ShowDTC> createState() {
@@ -31,7 +33,7 @@ class _ShowDTCState extends State<ShowDTC> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          '${widget.modeInfoDTC[0].name}',
+          widget.modeInfoDTC[0].name,
           style: const TextStyle(
             color: Colors.black,
             fontSize: 20,
@@ -41,7 +43,7 @@ class _ShowDTCState extends State<ShowDTC> {
         backgroundColor: const Color.fromARGB(255, 145, 220, 255),
         leading: PopScope(
           canPop: false,
-          onPopInvoked: (bool didPop) {
+          onPopInvokedWithResult: (bool didPop, result) {
             if (didPop) {
               return;
             }
@@ -55,7 +57,7 @@ class _ShowDTCState extends State<ShowDTC> {
           ),
         ),
         bottom: PreferredSize(
-          preferredSize: Size.fromHeight(1.0),
+          preferredSize: const Size.fromHeight(1.0),
           child: Container(
             color: Colors.grey,
             height: 2.0,
@@ -66,32 +68,31 @@ class _ShowDTCState extends State<ShowDTC> {
         children: [
           StreamBuilder(
             stream: databaseRef
-                .child('${verifyId}${widget.modeInfoDTC[0].firebase_name}/num')
+                .child('$verifyId${widget.modeInfoDTC[0].firebaseName}/num')
                 .onValue,
             builder: (context, snapshot) {
               if (snapshot.hasData &&
                   !snapshot.hasError &&
                   snapshot.data!.snapshot.value != null) {
                 widget.modeInfoDTC[0].value = snapshot.data!.snapshot.value;
-                widget.modeInfoDTC[0].pri_stat_1 = widget.modeInfoDTC[0].value;
+                widget.modeInfoDTC[0].priStat1 = widget.modeInfoDTC[0].value;
                 return Column(
                   children: [
                     const SizedBox(height: 10),
-                    Container(
-                        child: Center(
-                            child: Text(
-                              'Số lượng ${widget.modeInfoDTC[0].name}: ${widget.modeInfoDTC[0].pri_stat_1}', 
-                              style: TextStyle(fontSize: 18),
-                            ))),
+                    Center(
+                        child: Text(
+                      'Số lượng ${widget.modeInfoDTC[0].name}: ${widget.modeInfoDTC[0].priStat1}',
+                      style: const TextStyle(fontSize: 18),
+                    )),
                     ListView.builder(
                       padding: const EdgeInsets.all(8),
-                      itemCount: widget.modeInfoDTC[0].pri_stat_1,
+                      itemCount: widget.modeInfoDTC[0].priStat1,
                       shrinkWrap: true,
                       itemBuilder: (BuildContext context, int index) {
                         return StreamBuilder(
                           stream: databaseRef
                               .child(
-                                  '${verifyId}${widget.modeInfoDTC[0].firebase_name}/${index + 1}')
+                                  '$verifyId${widget.modeInfoDTC[0].firebaseName}/${index + 1}')
                               .onValue,
                           builder: (context, snapshot) {
                             if (snapshot.hasData &&
@@ -100,17 +101,22 @@ class _ShowDTCState extends State<ShowDTC> {
                               dtcCode[index] =
                                   snapshot.data!.snapshot.value.toString();
                               return Card(
-                                  color: const Color.fromARGB(255, 190, 190, 190),
-                                  child: ListTile(
-                                    leading: const Icon(Icons.warning, color: Colors.yellow,),
-                                    title: Text('${dtcCode[index]}', style: TextStyle(fontSize: 20)),
-                                    onTap: () {
-                                      _showDtcDetail(dtcCode[index]);
-                                    },
+                                color: const Color.fromARGB(255, 190, 190, 190),
+                                child: ListTile(
+                                  leading: const Icon(
+                                    Icons.warning,
+                                    color: Colors.yellow,
                                   ),
+                                  title: Text(dtcCode[index],
+                                      style: const TextStyle(fontSize: 20)),
+                                  onTap: () {
+                                    _showDtcDetail(dtcCode[index]);
+                                  },
+                                ),
                               );
                             } else {
-                              return Center(child: CircularProgressIndicator());
+                              return const Center(
+                                  child: CircularProgressIndicator());
                             }
                           },
                         );
@@ -119,15 +125,15 @@ class _ShowDTCState extends State<ShowDTC> {
                   ],
                 );
               } else {
-                return Center(child: CircularProgressIndicator());
+                return const Center(child: CircularProgressIndicator());
               }
             },
           ),
-          Spacer(),
+          const Spacer(),
           Padding(
             padding: const EdgeInsets.all(16.0),
             child: ElevatedButton.icon(
-              icon: Icon(Icons.delete, size: 25, color: Colors.white),
+              icon: const Icon(Icons.delete, size: 25, color: Colors.white),
               label: const Text('Xóa các mã lỗi DTC',
                   style: TextStyle(color: Colors.white)),
               onPressed: () {
@@ -137,7 +143,8 @@ class _ShowDTCState extends State<ShowDTC> {
                   backgroundColor: Colors.red,
                   padding: const EdgeInsets.symmetric(
                       horizontal: 40, vertical: 20), // Adjusted padding
-                  textStyle: TextStyle(fontSize: 20) // Corrected text size
+                  textStyle:
+                      const TextStyle(fontSize: 20) // Corrected text size
                   ),
             ),
           ),
@@ -161,11 +168,11 @@ class _ShowDTCState extends State<ShowDTC> {
             content: SingleChildScrollView(
               child: ListBody(
                 children: <Widget>[
+                  Text('Mô tả: ${data['description'] ?? 'Không có dữ liệu'}'),
+                  const SizedBox(height: 20),
                   Text(
-                      'Mô tả: ${data['description'] ?? 'Không có dữ liệu'}'),
-                  SizedBox(height: 20),
-                  Text('Triệu chứng: ${data['symptoms'] ?? 'Không có dữ liệu'}'),
-                  SizedBox(height: 20),
+                      'Triệu chứng: ${data['symptoms'] ?? 'Không có dữ liệu'}'),
+                  const SizedBox(height: 20),
                   Text(
                       'Cách xử lý: ${data['repair tips'] ?? 'Không có dữ liệu'}'),
                 ],
@@ -173,7 +180,7 @@ class _ShowDTCState extends State<ShowDTC> {
             ),
             actions: <Widget>[
               TextButton(
-                child: Text('Đóng'),
+                child: const Text('Đóng'),
                 onPressed: () {
                   Navigator.of(context).pop();
                 },
