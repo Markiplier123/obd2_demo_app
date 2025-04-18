@@ -1,12 +1,14 @@
+import 'package:app_chan_doan/connection_manage.dart';
 import 'package:app_chan_doan/mode_1/mode_1_chart.dart';
 import 'package:app_chan_doan/mode_1/mode_1_first_page.dart';
+import 'package:app_chan_doan/mode_4/mode_4_first_page.dart';
 import 'package:app_chan_doan/mode_4/mode_4_livedata.dart';
 import 'package:app_chan_doan/mode_obj_info.dart';
 import 'package:flutter/material.dart';
 import 'package:app_chan_doan/mqtt.dart';
 import 'package:firebase_database/firebase_database.dart';
 
-List<String> status = ['Completed', 'In Progress'];
+List<String> status = ['Hoàn thành', 'Đang xử lý'];
 
 class Mode4SecondPage extends StatelessWidget {
   const Mode4SecondPage(
@@ -25,58 +27,76 @@ class Mode4SecondPage extends StatelessWidget {
         appBar: AppBar(
           title: Text('${Mode4ActInfo.name}'),
           titleTextStyle: const TextStyle(
-              color: Colors.black, fontSize: 30, fontWeight: FontWeight.bold),
+              color: Colors.black, fontSize: 20, fontWeight: FontWeight.bold),
           backgroundColor: const Color.fromARGB(255, 145, 220, 255),
-          leading: BackButton(
-            color: Colors.black,
-            onPressed: () {
+          leading: PopScope(
+            canPop: false,
+            onPopInvoked: (bool didPop) {
+              if (didPop) {
+                return;
+              }
               mqtt.publish('{"mode":0}');
               streamDataMonitor.forEach((item) {
                 item.status = false;
               });
-              Navigator.of(context).pop();
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => Mode4FirstPage()));
             },
+            child: BackButton(
+              color: Colors.black,
+              onPressed: () {
+                mqtt.publish('{"mode":0}');
+                streamDataMonitor.forEach((item) {
+                  item.status = false;
+                });
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => Mode4FirstPage()));
+              },
+            ),
           ),
           bottom: PreferredSize(
-          preferredSize: Size.fromHeight(1.0),
-          child: Container(
-            color: Colors.grey,
-            height: 2.0,
+            preferredSize: Size.fromHeight(1.0),
+            child: Container(
+              color: Colors.grey,
+              height: 2.0,
+            ),
           ),
-        ),
         ),
         body: Column(
           children: [
-            Container(
-              child: StreamBuilder(
-                stream:
-                    databaseRef.child('${Mode4ActInfo.firebase_name}').onValue,
-                builder: (context, snapshot) {
-                  if (snapshot.hasData &&
-                      !snapshot.hasError &&
-                      snapshot.data!.snapshot.value != null) {
-                    Mode4ActInfo.value = snapshot.data!.snapshot.value;
-                    return Row(
-                      children: [
-                        SizedBox(width: 10),
-                        Text(
-                          '${Mode4ActInfo.name}',
-                          style: TextStyle(fontSize: 20),
-                        ),
-                        Spacer(),
-                        Text(
+            SizedBox(width: 20),
+            Row(
+              children: [
+                SizedBox(width: 18),
+                const Text(
+                  'Trạng thái:',
+                  style: TextStyle(fontSize: 16, color: Color.fromARGB(255, 20, 50, 220)),
+                ),
+                Spacer(),
+                Container(
+                  child: StreamBuilder(
+                    stream: databaseRef
+                        .child('${verifyId}${Mode4ActInfo.firebase_name}')
+                        .onValue,
+                    builder: (context, snapshot) {
+                      if (snapshot.hasData &&
+                          !snapshot.hasError &&
+                          snapshot.data!.snapshot.value != null) {
+                        Mode4ActInfo.value = snapshot.data!.snapshot.value;
+                        return Text(
                           '${status[((Mode4ActInfo.value + 255) / 256).toInt()]}',
-                          style: TextStyle(fontSize: 20),
-                        ),
-                        SizedBox(width: 10),
-                      ],
-                    );
-                  } else {
-                    return Center(child: CircularProgressIndicator());
-                  }
-                },
-              ),
+                          style: TextStyle(fontSize: 16, color: Color.fromARGB(255, 20, 50, 220)),
+                        );
+                      } else {
+                        return Center(child: CircularProgressIndicator());
+                      }
+                    },
+                  ),
+                ),
+                SizedBox(width: 18),
+              ],
             ),
+            SizedBox(width: 20),
             Divider(),
             Expanded(
               child: ListView.separated(
@@ -87,33 +107,48 @@ class Mode4SecondPage extends StatelessWidget {
                     return Container(
                       child: Row(
                         children: [
-                          Text('${temp[index].name}'),
-                          Spacer(),
-                          StreamBuilder(
-                            stream: databaseRef
-                                .child('${temp[index].firebase_name}')
-                                .onValue,
-                            builder: (context, snapshot) {
-                              if (snapshot.hasData &&
-                                  !snapshot.hasError &&
-                                  snapshot.data!.snapshot.value != null) {
-                                temp[index].value = snapshot.data!.snapshot.value;
-                                return Text(
-                                  '${temp[index].value}',
-                                  style: TextStyle(fontSize: 20),
-                                );
-                              } else {
-                                return Center(child: CircularProgressIndicator());
-                              }
-                            },
+                          const SizedBox(width: 10),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text('${temp[index].name}'),
+                              Row(
+                                children: [
+                                  StreamBuilder(
+                                    stream: databaseRef
+                                        .child(
+                                            '${verifyId}${temp[index].firebase_name}')
+                                        .onValue,
+                                    builder: (context, snapshot) {
+                                      if (snapshot.hasData &&
+                                          !snapshot.hasError &&
+                                          snapshot.data!.snapshot.value !=
+                                              null) {
+                                        temp[index].value =
+                                            snapshot.data!.snapshot.value;
+                                        return Text(
+                                          '${temp[index].value}',
+                                          style: TextStyle(fontSize: 17, color: const Color.fromARGB(255, 10, 90, 160)),
+                                        );
+                                      } else {
+                                        return CircularProgressIndicator();
+                                      }
+                                    },
+                                  ),
+                                  SizedBox(width: 20),
+                                  Text('${temp[index].unit}',
+                                      style: TextStyle(fontSize: 16)),
+                                ],
+                              ),
+                            ],
                           ),
                           Spacer(),
                           IconButton(
                               onPressed: () => Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (context) =>
-                                          ChartWidget(chartValue: temp[index]))),
+                                      builder: (context) => ChartWidget(
+                                          chartValue: temp[index]))),
                               icon: Icon(Icons.add_chart))
                         ],
                       ),
@@ -135,7 +170,7 @@ class Mode4SecondPage extends StatelessWidget {
                             builder: (context) => Mode4Livedata(
                                 mode4Info: Mode4ActInfo,
                                 checkboxValue: streamDataMonitor))),
-                    child: Text('Monitor'),
+                    child: Text('Thông số'),
                     style: TextButton.styleFrom(
                       backgroundColor: Colors.red,
                       foregroundColor: Colors.white,
@@ -144,9 +179,10 @@ class Mode4SecondPage extends StatelessWidget {
                   Spacer(),
                   TextButton(
                     onPressed: () {
-                      mqtt.publish('{"mode":${Mode4ActInfo.mode},"value":${Mode4ActInfo.pri_stat_1},"key":${Mode4ActInfo.pri_stat_2}}');
+                      mqtt.publish(
+                          '{"mode":${Mode4ActInfo.mode},"value":${Mode4ActInfo.pri_stat_1},"key":${Mode4ActInfo.pri_stat_2}}');
                     },
-                    child: Text('Perform'),
+                    child: Text('Ngắt'),
                     style: TextButton.styleFrom(
                       backgroundColor: Colors.red,
                       foregroundColor: Colors.white,
@@ -164,17 +200,32 @@ class Mode4SecondPage extends StatelessWidget {
         appBar: AppBar(
           title: Text('${Mode4ActInfo.name}'),
           titleTextStyle: const TextStyle(
-              color: Colors.black, fontSize: 30, fontWeight: FontWeight.bold),
+              color: Colors.black, fontSize: 20, fontWeight: FontWeight.bold),
           backgroundColor: const Color.fromARGB(255, 145, 220, 255),
-          leading: BackButton(
-            color: Colors.black,
-            onPressed: () {
+          leading: PopScope(
+            canPop: false,
+            onPopInvoked: (bool didPop) {
+              if (didPop) {
+                return;
+              }
               mqtt.publish('{"mode":0}');
               streamDataMonitor.forEach((item) {
                 item.status = false;
               });
-              Navigator.of(context).pop();
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => Mode4FirstPage()));
             },
+            child: BackButton(
+              color: Colors.black,
+              onPressed: () {
+                mqtt.publish('{"mode":0}');
+                streamDataMonitor.forEach((item) {
+                  item.status = false;
+                });
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => Mode4FirstPage()));
+              },
+            ),
           ),
           bottom: PreferredSize(
             preferredSize: Size.fromHeight(1.0),
@@ -186,34 +237,40 @@ class Mode4SecondPage extends StatelessWidget {
         ),
         body: Column(
           children: [
-            Container(
-              child: StreamBuilder(
-                stream:
-                    databaseRef.child('${Mode4ActInfo.firebase_name}').onValue,
-                builder: (context, snapshot) {
-                  if (snapshot.hasData &&
-                      !snapshot.hasError &&
-                      snapshot.data!.snapshot.value != null) {
-                    Mode4ActInfo.value = snapshot.data!.snapshot.value;
-                    return Row(
-                      children: [
-                        Text(
-                          '${Mode4ActInfo.name}',
-                          style: TextStyle(fontSize: 20),
-                        ),
-                        Spacer(),
-                        Text(
+            SizedBox(width: 20),
+            Row(
+              children: [
+                SizedBox(width: 18),
+                const Text(
+                  'Trạng thái:',
+                  style: TextStyle(fontSize: 16, color: Color.fromARGB(255, 20, 50, 220)),
+                ),
+                Spacer(),
+                Container(
+                  child: StreamBuilder(
+                    stream: databaseRef
+                        .child('${verifyId}${Mode4ActInfo.firebase_name}')
+                        .onValue,
+                    builder: (context, snapshot) {
+                      if (snapshot.hasData &&
+                          !snapshot.hasError &&
+                          snapshot.data!.snapshot.value != null) {
+                        Mode4ActInfo.value = snapshot.data!.snapshot.value;
+                        return Text(
                           '${status[((Mode4ActInfo.value + 255) / 256).toInt()]}',
-                          style: TextStyle(fontSize: 20),
-                        ),
-                      ],
-                    );
-                  } else {
-                    return Center(child: CircularProgressIndicator());
-                  }
-                },
-              ),
+                          style: TextStyle(fontSize: 16, color: Color.fromARGB(255, 20, 50, 220)),
+                        );
+                      } else {
+                        return Center(child: CircularProgressIndicator());
+                      }
+                    },
+                  ),
+                ),
+                SizedBox(width: 18),
+              ],
             ),
+            SizedBox(width: 20),
+            Divider(),
             Expanded(
               child: ListView.separated(
                 padding: const EdgeInsets.all(8),
@@ -224,33 +281,48 @@ class Mode4SecondPage extends StatelessWidget {
                     return Container(
                       child: Row(
                         children: [
-                          Text('${temp[index].name}'),
-                          Spacer(),
-                          StreamBuilder(
-                            stream: databaseRef
-                                .child('${temp[index].firebase_name}')
-                                .onValue,
-                            builder: (context, snapshot) {
-                              if (snapshot.hasData &&
-                                  !snapshot.hasError &&
-                                  snapshot.data!.snapshot.value != null) {
-                                temp[index].value = snapshot.data!.snapshot.value;
-                                return Text(
-                                  '${temp[index].value}',
-                                  style: TextStyle(fontSize: 20),
-                                );
-                              } else {
-                                return Center(child: CircularProgressIndicator());
-                              }
-                            },
+                          const SizedBox(width: 10),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text('${temp[index].name}'),
+                              Row(
+                                children: [
+                                  StreamBuilder(
+                                    stream: databaseRef
+                                        .child(
+                                            '${verifyId}${temp[index].firebase_name}')
+                                        .onValue,
+                                    builder: (context, snapshot) {
+                                      if (snapshot.hasData &&
+                                          !snapshot.hasError &&
+                                          snapshot.data!.snapshot.value !=
+                                              null) {
+                                        temp[index].value =
+                                            snapshot.data!.snapshot.value;
+                                        return Text(
+                                          '${temp[index].value}',
+                                          style: TextStyle(fontSize: 17, color: const Color.fromARGB(255, 10, 90, 160)),
+                                        );
+                                      } else {
+                                        return CircularProgressIndicator();
+                                      }
+                                    },
+                                  ),
+                                  SizedBox(width: 20),
+                                  Text('${temp[index].unit}',
+                                      style: TextStyle(fontSize: 16)),
+                                ],
+                              ),
+                            ],
                           ),
                           Spacer(),
                           IconButton(
                               onPressed: () => Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (context) =>
-                                          ChartWidget(chartValue: temp[index]))),
+                                      builder: (context) => ChartWidget(
+                                          chartValue: temp[index]))),
                               icon: Icon(Icons.add_chart))
                         ],
                       ),
@@ -272,7 +344,7 @@ class Mode4SecondPage extends StatelessWidget {
                             builder: (context) => Mode4Livedata(
                                 mode4Info: Mode4ActInfo,
                                 checkboxValue: streamDataMonitor))),
-                    child: Text('Monitor'),
+                    child: Text('Thông số'),
                     style: TextButton.styleFrom(
                       backgroundColor: Colors.red,
                       foregroundColor: Colors.white,
@@ -281,9 +353,10 @@ class Mode4SecondPage extends StatelessWidget {
                   Spacer(),
                   TextButton(
                     onPressed: () {
-                      mqtt.publish('{"mode":${Mode4ActInfo.mode},"value":${Mode4ActInfo.pri_stat_1},"key":1}');
+                      mqtt.publish(
+                          '{"mode":${Mode4ActInfo.mode},"value":${Mode4ActInfo.pri_stat_1},"key":1}');
                     },
-                    child: Text('On'),
+                    child: Text('Bật'),
                     style: TextButton.styleFrom(
                       backgroundColor: Colors.red,
                       foregroundColor: Colors.white,
@@ -292,9 +365,10 @@ class Mode4SecondPage extends StatelessWidget {
                   Spacer(),
                   TextButton(
                     onPressed: () {
-                      mqtt.publish('{"mode":${Mode4ActInfo.mode},"value":${Mode4ActInfo.pri_stat_1},"key":0}');
+                      mqtt.publish(
+                          '{"mode":${Mode4ActInfo.mode},"value":${Mode4ActInfo.pri_stat_1},"key":0}');
                     },
-                    child: Text('Off'),
+                    child: Text('Tắt'),
                     style: TextButton.styleFrom(
                       backgroundColor: Colors.red,
                       foregroundColor: Colors.white,

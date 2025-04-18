@@ -1,3 +1,4 @@
+import 'package:app_chan_doan/connection_manage.dart';
 import 'package:app_chan_doan/mqtt.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart';
@@ -10,10 +11,12 @@ class ShowDTC extends StatefulWidget {
   final List<mode_obj_info> modeInfoDTC;
 
   @override
-  _ReadDTCPageState createState() => _ReadDTCPageState();
+  State<ShowDTC> createState() {
+    return _ShowDTCState();
+  }
 }
 
-class _ReadDTCPageState extends State<ShowDTC> {
+class _ShowDTCState extends State<ShowDTC> {
   final databaseRef = FirebaseDatabase.instance.ref();
   List<String> dtcCode = List.filled(256, '');
 
@@ -31,11 +34,26 @@ class _ReadDTCPageState extends State<ShowDTC> {
           '${widget.modeInfoDTC[0].name}',
           style: const TextStyle(
             color: Colors.black,
-            fontSize: 30,
+            fontSize: 20,
             fontWeight: FontWeight.bold,
           ),
         ),
         backgroundColor: const Color.fromARGB(255, 145, 220, 255),
+        leading: PopScope(
+          canPop: false,
+          onPopInvoked: (bool didPop) {
+            if (didPop) {
+              return;
+            }
+            Navigator.of(context).pop();
+          },
+          child: BackButton(
+            color: Colors.black,
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+          ),
+        ),
         bottom: PreferredSize(
           preferredSize: Size.fromHeight(1.0),
           child: Container(
@@ -48,7 +66,7 @@ class _ReadDTCPageState extends State<ShowDTC> {
         children: [
           StreamBuilder(
             stream: databaseRef
-                .child('${widget.modeInfoDTC[0].firebase_name}/num')
+                .child('${verifyId}${widget.modeInfoDTC[0].firebase_name}/num')
                 .onValue,
             builder: (context, snapshot) {
               if (snapshot.hasData &&
@@ -62,8 +80,8 @@ class _ReadDTCPageState extends State<ShowDTC> {
                     Container(
                         child: Center(
                             child: Text(
-                              'Number Of ${widget.modeInfoDTC[0].name}: ${widget.modeInfoDTC[0].pri_stat_1}', 
-                              style: TextStyle(fontSize: 20),
+                              'Số lượng ${widget.modeInfoDTC[0].name}: ${widget.modeInfoDTC[0].pri_stat_1}', 
+                              style: TextStyle(fontSize: 18),
                             ))),
                     ListView.builder(
                       padding: const EdgeInsets.all(8),
@@ -73,7 +91,7 @@ class _ReadDTCPageState extends State<ShowDTC> {
                         return StreamBuilder(
                           stream: databaseRef
                               .child(
-                                  '${widget.modeInfoDTC[0].firebase_name}/${index + 1}')
+                                  '${verifyId}${widget.modeInfoDTC[0].firebase_name}/${index + 1}')
                               .onValue,
                           builder: (context, snapshot) {
                             if (snapshot.hasData &&
@@ -86,6 +104,9 @@ class _ReadDTCPageState extends State<ShowDTC> {
                                   child: ListTile(
                                     leading: const Icon(Icons.warning, color: Colors.yellow,),
                                     title: Text('${dtcCode[index]}', style: TextStyle(fontSize: 20)),
+                                    onTap: () {
+                                      _showDtcDetail(dtcCode[index]);
+                                    },
                                   ),
                               );
                             } else {
@@ -107,8 +128,8 @@ class _ReadDTCPageState extends State<ShowDTC> {
             padding: const EdgeInsets.all(16.0),
             child: ElevatedButton.icon(
               icon: Icon(Icons.delete, size: 25, color: Colors.white),
-              label: const Text('CLEAR DTC TROUBLE CODE',
-                  style: TextStyle(fontSize: 15, color: Colors.white)),
+              label: const Text('Xóa các mã lỗi DTC',
+                  style: TextStyle(color: Colors.white)),
               onPressed: () {
                 mqtt.publish('{"mode":4}');
               },
@@ -123,5 +144,56 @@ class _ReadDTCPageState extends State<ShowDTC> {
         ],
       ),
     );
+  }
+
+  void _showDtcDetail(String code) async {
+    DocumentSnapshot doc = await FirebaseFirestore.instance
+        .collection('dtc_codes')
+        .doc(code)
+        .get();
+    if (doc.exists) {
+      Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text(data['name'] ?? 'Không có dữ liệu'),
+            content: SingleChildScrollView(
+              child: ListBody(
+                children: <Widget>[
+                  Text(
+                      'Mô tả: ${data['description'] ?? 'Không có dữ liệu'}'),
+                  SizedBox(height: 20),
+                  Text('Triệu chứng: ${data['symptoms'] ?? 'Không có dữ liệu'}'),
+                  SizedBox(height: 20),
+                  Text(
+                      'Cách xử lý: ${data['repair tips'] ?? 'Không có dữ liệu'}'),
+                ],
+              ),
+            ),
+            actions: <Widget>[
+              TextButton(
+                child: Text('Đóng'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          );
+        },
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            'Không có dữ liệu của $code',
+            style: const TextStyle(
+              fontSize: 18, // Specify the font size
+              color: Colors.white, // Optional: Change text color
+            ),
+          ),
+        ),
+      );
+    }
   }
 }

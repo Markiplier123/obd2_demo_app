@@ -13,16 +13,29 @@ class Mode1SecondPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Read Data Stream'),
+        title: Text('Đọc dữ liệu của xe'),
         titleTextStyle: const TextStyle(
-            color: Colors.black, fontSize: 30, fontWeight: FontWeight.bold),
+            color: Colors.black, fontSize: 20, fontWeight: FontWeight.bold),
         backgroundColor: const Color.fromARGB(255, 145, 220, 255),
-        leading: BackButton(
-          color: Colors.black,
-          onPressed: () {
+        leading: PopScope(
+          canPop: false,
+          onPopInvoked: (bool didPop) {
+            if (didPop) {
+              return;
+            }
             mqtt.publish('{"mode":0}');
+            listMode1info.forEach((item) {
+              item.status = false;
+            });
             Navigator.of(context).pop();
           },
+          child: BackButton(
+            color: Colors.black,
+            onPressed: () {
+              mqtt.publish('{"mode":0}');
+              Navigator.of(context).pop();
+            },
+          ),
         ),
         bottom: PreferredSize(
           preferredSize: Size.fromHeight(1.0),

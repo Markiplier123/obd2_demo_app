@@ -15,6 +15,7 @@ class MQTTManager {
     client.onDisconnected = onDisconnected;
     client.onConnected = onConnected;
     client.onSubscribed = onSubscribed;
+    
 
     final connMessage = MqttConnectMessage()
         .withClientIdentifier('flutter_client')
@@ -77,5 +78,5 @@ class MQTTManager {
   }
 }
 
-final client = MqttServerClient('broker.hivemq.com', 'flutter_client');
-MQTTManager mqtt = MQTTManager(client: client, topic: 'ESP8266_read_data');
+final client = MqttServerClient('test.mosquitto.org', 'flutter_client');
+MQTTManager mqtt = MQTTManager(client: client, topic: '2000/req');

@@ -62,8 +62,23 @@ class _Mode4LivedataState extends State<Mode4Livedata> {
       appBar: AppBar(
         title: Text('${widget.mode4Info.name}'),
         titleTextStyle: const TextStyle(
-            color: Colors.black, fontSize: 30, fontWeight: FontWeight.bold),
+            color: Colors.black, fontSize: 20, fontWeight: FontWeight.bold),
         backgroundColor: const Color.fromARGB(255, 145, 220, 255),
+        leading: PopScope(
+          canPop: false,
+          onPopInvoked: (bool didPop) {
+            if (didPop) {
+              return;
+            }
+            Navigator.of(context).pop();
+          },
+          child: BackButton(
+            color: Colors.black,
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+          ),
+        ),
         bottom: PreferredSize(
           preferredSize: Size.fromHeight(1.0),
           child: Container(
@@ -72,6 +87,7 @@ class _Mode4LivedataState extends State<Mode4Livedata> {
           ),
         ),
       ),
+      backgroundColor: Colors.white,
       body: Column(
         children: [
           Expanded(
@@ -92,7 +108,7 @@ class _Mode4LivedataState extends State<Mode4Livedata> {
                       });
                     });
                   },
-                  child: Text('Select All'),
+                  child: Text('Chọn tất cả'),
                   style: TextButton.styleFrom(
                     backgroundColor: Colors.red,
                     foregroundColor: Colors.white,
@@ -109,7 +125,7 @@ class _Mode4LivedataState extends State<Mode4Livedata> {
                       });
                     });
                   },
-                  child: Text('Clear All'),
+                  child: Text('Hủy tất cả'),
                   style: TextButton.styleFrom(
                     backgroundColor: Colors.red,
                     foregroundColor: Colors.white,

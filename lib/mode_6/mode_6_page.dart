@@ -1,3 +1,4 @@
+import 'package:app_chan_doan/connection_manage.dart';
 import 'package:app_chan_doan/mode_obj_info.dart';
 import 'package:app_chan_doan/mqtt.dart';
 import 'package:flutter/material.dart';
@@ -14,16 +15,26 @@ class Mode6Page extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('OBD Test Results'),
+        title: Text('Kết quả OBD Test'),
         titleTextStyle: const TextStyle(
-            color: Colors.black, fontSize: 30, fontWeight: FontWeight.bold),
+            color: Colors.black, fontSize: 20, fontWeight: FontWeight.bold),
         backgroundColor: const Color.fromARGB(255, 145, 220, 255),
-        leading: BackButton(
-          color: Colors.black,
-          onPressed: () {
+        leading: PopScope(
+          canPop: false,
+          onPopInvoked: (bool didPop) {
+            if (didPop) {
+              return;
+            }
             mqtt.publish('{"mode":0}');
             Navigator.of(context).pop();
           },
+          child: BackButton(
+            color: Colors.black,
+            onPressed: () {
+              mqtt.publish('{"mode":0}');
+              Navigator.of(context).pop();
+            },
+          ),
         ),
         bottom: PreferredSize(
           preferredSize: Size.fromHeight(1.0),
@@ -41,17 +52,17 @@ class Mode6Page extends StatelessWidget {
               border: TableBorder.all(color: Colors.grey),
               columnWidths: const <int, TableColumnWidth> {
                 0: FlexColumnWidth(),
-                1: FixedColumnWidth(85),
-                2: FixedColumnWidth(85),
-                3: FixedColumnWidth(85),
+                1: FixedColumnWidth(90),
+                2: FixedColumnWidth(90),
+                3: FixedColumnWidth(90),
               },
               children: [
                 TableRow(
                   decoration: BoxDecoration(color: Colors.grey[300]),
                   children: const [
-                    TableCell(child: Padding(padding: EdgeInsets.all(8.0), child: Center(child: Text('Name', style: TextStyle(fontWeight: FontWeight.bold))))),
+                    TableCell(child: Padding(padding: EdgeInsets.all(8.0), child: Center(child: Text('Tên', style: TextStyle(fontWeight: FontWeight.bold))))),
                     TableCell(child: Padding(padding: EdgeInsets.all(8.0), child: Center(child: Text('Min', style: TextStyle(fontWeight: FontWeight.bold))))),
-                    TableCell(child: Padding(padding: EdgeInsets.all(8.0), child: Center(child: Text('Test Value', style: TextStyle(fontWeight: FontWeight.bold))))),
+                    TableCell(child: Padding(padding: EdgeInsets.all(8.0), child: Center(child: Text('Giá trị', style: TextStyle(fontWeight: FontWeight.bold))))),
                     TableCell(child: Padding(padding: EdgeInsets.all(8.0), child: Center(child: Text('Max', style: TextStyle(fontWeight: FontWeight.bold))))),
                   ],
                 ),
@@ -66,9 +77,9 @@ class Mode6Page extends StatelessWidget {
                   border: TableBorder.all(color: Colors.grey),
                   columnWidths: const <int, TableColumnWidth> {
                     0: FlexColumnWidth(),
-                    1: FixedColumnWidth(85),
-                    2: FixedColumnWidth(85),
-                    3: FixedColumnWidth(85),
+                    1: FixedColumnWidth(90),
+                    2: FixedColumnWidth(90),
+                    3: FixedColumnWidth(90),
                   },
                   children: [
                     TableRow(
@@ -76,7 +87,7 @@ class Mode6Page extends StatelessWidget {
                         TableCell(child: Padding(padding: EdgeInsets.all(8.0), child: Text(listMode6info[index].name))),
                         TableCell(child: Padding(padding: EdgeInsets.all(8.0), child: StreamBuilder(
                             stream: databaseRef
-                                .child('${listMode6info[index].firebase_name}/min')
+                                .child('${verifyId}${listMode6info[index].firebase_name}/min')
                                 .onValue,
                             builder: (context, snapshot) {
                               if (snapshot.hasData &&
@@ -96,7 +107,7 @@ class Mode6Page extends StatelessWidget {
                           ),)),
                         TableCell(child: Padding(padding: EdgeInsets.all(8.0), child: StreamBuilder(
                             stream: databaseRef
-                                .child('${listMode6info[index].firebase_name}/test_value')
+                                .child('${verifyId}${listMode6info[index].firebase_name}/test_value')
                                 .onValue,
                             builder: (context, snapshot) {
                               if (snapshot.hasData &&
@@ -116,7 +127,7 @@ class Mode6Page extends StatelessWidget {
                           ),)),
                         TableCell(child: Padding(padding: EdgeInsets.all(8.0), child: StreamBuilder(
                             stream: databaseRef
-                                .child('${listMode6info[index].firebase_name}/max')
+                                .child('${verifyId}${listMode6info[index].firebase_name}/max')
                                 .onValue,
                             builder: (context, snapshot) {
                               if (snapshot.hasData &&

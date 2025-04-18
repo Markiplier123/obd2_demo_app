@@ -10,9 +10,24 @@ class DiagnosticPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color.fromARGB(255, 145, 220, 255),
-        title: const Text('Diagnostic'),
+        title: const Text('Đọc lỗi DTC'),
         titleTextStyle: const TextStyle(
-            color: Colors.black, fontSize: 30, fontWeight: FontWeight.bold),
+            color: Colors.black, fontSize: 20, fontWeight: FontWeight.bold),
+        leading: PopScope(
+          canPop: false,
+          onPopInvoked: (bool didPop) {
+            if (didPop) {
+              return;
+            }
+            Navigator.of(context).pop();
+          },
+          child: BackButton(
+            color: Colors.black,
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+          ),
+        ),
         bottom: PreferredSize(
           preferredSize: Size.fromHeight(1.0),
           child: Container(
@@ -29,9 +44,9 @@ class DiagnosticPage extends StatelessWidget {
         mainAxisSpacing: 4.0,
         crossAxisSpacing: 4.0,
         children: <Widget>[
-          _buildButton(context, "Stored DTC",
+          _buildButton(context, "DTC đã lưu trữ",
               'assets/images/Stored_DTC.png', ShowDTC(modeInfoDTC: listMode3info)),
-          _buildButton(context, "Pending DTC",
+          _buildButton(context, "DTC đang xử lý",
               'assets/images/Pending_DTC.png', ShowDTC(modeInfoDTC: listMode7info)),
         ],
       ),
@@ -49,12 +64,12 @@ class DiagnosticPage extends StatelessWidget {
           borderRadius: BorderRadius.circular(15),
           side: const BorderSide(
               color: Color.fromARGB(255, 0, 0, 0),
-              width: 3), // White border around the button
+              width: 3),
         ),
         padding: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
-        backgroundColor: Colors.white, // Background color black
-        foregroundColor: Colors.black, // Text color white
-        elevation: 0, // Optional: adds shadow to the button
+        backgroundColor: Colors.white,
+        foregroundColor: Colors.black,
+        elevation: 0,
         shadowColor: Colors.black.withOpacity(1),
       ),
       child: Column(
@@ -69,20 +84,20 @@ class DiagnosticPage extends StatelessWidget {
                       const Color.fromARGB(255, 183, 183, 183).withOpacity(0),
                   spreadRadius: 1,
                   blurRadius: 4,
-                  offset: Offset(0, 0), // changes position of shadow
+                  offset: Offset(0, 0),
                 ),
               ],
             ),
             child: Image.asset(iconPath,
-                width: 60,
-                height: 60), // Image adjusted to not use ColorFiltered
+                width: 80,
+                height: 80),
           ),
           SizedBox(height: 10),
           Text(
             text,
             textAlign: TextAlign.center,
             style: const TextStyle(
-              fontSize: 17,
+              fontSize: 18,
               fontWeight: FontWeight.bold,
               color: Colors.black,
             ),
