@@ -1,7 +1,6 @@
 import 'package:mqtt_client/mqtt_client.dart';
 import 'package:mqtt_client/mqtt_server_client.dart';
 
-
 class MQTTManager {
   MqttServerClient client;
   final String topic;
@@ -15,13 +14,12 @@ class MQTTManager {
     client.onDisconnected = onDisconnected;
     client.onConnected = onConnected;
     client.onSubscribed = onSubscribed;
-    
 
     final connMessage = MqttConnectMessage()
         .withClientIdentifier('flutter_client')
         .startClean()
         .withWillQos(MqttQos.atMostOnce);
-    
+
     client.connectionMessage = connMessage;
   }
 
@@ -72,8 +70,7 @@ class MQTTManager {
           'Change notification:: topic is <${c[0].topic}>, payload is <-- $pt -->');
       print('');
     });
-    print(
-        'OnConnected client callback - Client connection was sucessful');
+    print('OnConnected client callback - Client connection was sucessful');
   }
 }
 

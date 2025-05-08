@@ -4,6 +4,7 @@ import 'package:app_chan_doan/seri_page.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
+import 'package:app_chan_doan/menu_page.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -20,7 +21,7 @@ void main() async {
 class MyApp extends StatefulWidget {
   const MyApp({super.key});
 
-  @override
+  @overrideF
   State<MyApp> createState() {
     return _MyAppState();
   }
@@ -49,7 +50,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   @override
   Widget build(BuildContext context) {
     return const MaterialApp(
-      home: SeriPage(),
+      home: MenuPage(),
       debugShowCheckedModeBanner: false,
     );
   }
